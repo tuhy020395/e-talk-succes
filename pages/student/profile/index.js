@@ -2,7 +2,6 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { getProfile, updateProfileAPI } from '~/api/studentAPI';
 import {
-	uploadImageToServer,
 	getListTargetAPI,
 	getListLanguageAPI,
 	getTimeZoneAPI,

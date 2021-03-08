@@ -6,7 +6,6 @@ import { toastInit } from '~/utils';
 import { addSupportTicket } from '~/api/teacherAPI';
 import './TeacherSupportModal.module.scss';
 import { Editor } from '@tinymce/tinymce-react';
-// import { uploadImageToServer } from '~/api/optionAPI';
 
 const imageUploadHandle = async (blobInfo, success, failure, progress) => {
 	const blob = await blobInfo.blob();
