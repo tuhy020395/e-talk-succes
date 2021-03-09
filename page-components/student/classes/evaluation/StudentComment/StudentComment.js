@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import StudentCommentItem from './StudentCommentItem';
 import Pagination from 'react-js-pagination';
-import { getAllStudentReviewAPI } from '~/api/studentAPI';
+import { GetEvaluationContent } from '~/api/studentAPI';
 import SkeletonFeedback from './../SkeletonFeedback';
 import Skeleton from 'react-loading-skeleton';
 
@@ -24,8 +24,8 @@ const StudentComment = ({ TeacherUID }) => {
 
 	const getCommentAPI = async (params) => {
 		setLoading(true);
-		const res = await getAllStudentReviewAPI(params);
-		if (res.Code === 1) {
+		const res = await GetEvaluationContent(params);
+		if (res.Code === 200) {
 			setState(res.Data);
 			setPageSize(res.PageSize);
 			setTotalResult(res.TotalResult);
