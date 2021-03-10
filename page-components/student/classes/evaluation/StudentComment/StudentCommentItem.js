@@ -51,7 +51,7 @@ const StudentCommentItem = ({
 					) : (
 						''
 					)}
-					{CoursesName && <div className="meta">{CoursesName}</div>}
+					{/* {CoursesName && <div className="meta"></div>} */}
 				</div>
 				<div className="feedback-comment mg-b-15-f">
 					<p

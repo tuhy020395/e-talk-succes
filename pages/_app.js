@@ -19,6 +19,11 @@ import 'nprogress/nprogress.css';
 import dynamic from 'next/dynamic';
 import { getLayout } from '~/components/Layout';
 import { appWithTranslation } from '~/i18n';
+import '~/components/Menu/index.module.scss';
+import '~/components/Header/header.scss';
+import '~/components/Layout/layout.scss';
+import '~/components/common/LessonCard/index.module.scss';
+
 config.autoAddCss = false;
 config.autoReplaceSvg = false;
 library.add(fas, far, faSkype, faYoutube);

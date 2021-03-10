@@ -18,7 +18,6 @@ export const cancelLesson = async (params) => {
 	}
 	return result;
 };
-
 export const getListLevelPurpose = async (params) => {
 	let result;
 	try {
@@ -102,7 +101,6 @@ export const UploadFilePost = async (params) => {
 				formData.append('file', image);
 			});
 		}
-
 		let res = await instance.post(path + '/UploadFilePost', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',

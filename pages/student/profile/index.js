@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { getProfile, updateProfileAPI } from '~/api/studentAPI';
+import { getProfile, UpdateProfile } from '~/api/studentAPI';
 import {
 	getListTargetAPI,
 	getListLanguageAPI,
 	getTimeZoneAPI,
 	updatePassAPI,
+	UploadFilePost,
 } from '~/api/optionAPI';
 import { appSettings } from '~/config';
 
@@ -35,27 +36,10 @@ import './index.module.scss';
 import dayjs from 'dayjs';
 
 const schema = Yup.object().shape({
-	FullName: Yup.string().required('Họ tên không được để trống'),
-	Phone: Yup.number()
-		.required('Số điện thoại không được để trống')
-		.typeError('Số điện thoại không hợp lệ')
-		.integer('Số điện thoại không hợp lệ'),
-	Email: Yup.string()
-		.required('Email không được để trống')
-		.email('Email không hợp lệ'),
 	Address: Yup.string(),
 	BirthDay: Yup.date().required('Ngày sinh không được để trống'),
-	SelectTarget: Yup.string()
-		.nullable()
-		.required('Mục tiêu không được để trống'),
-	// Address: Yup.string().required('Địa chỉ không được để trống'),
-	PersonalPreference: Yup.string().required('Sở thích không được để trống'),
-	RequestWithTeacher: Yup.string().required(
-		'Yêu cầu với giáo viên không được để trống',
-	),
 	Language: Yup.string().matches(/[^0]+/g, 'Ngôn ngữ không được để trống'),
 	TimeZoneID: Yup.string().matches(/[^0]+/g, 'Múi giờ không được để trống'),
-	SkypeID: Yup.string().required('SkypeID không được để trống'),
 });
 const RenderTimeZoneList = ({ list }) => {
 	return (
@@ -133,17 +117,18 @@ const StudentProfile = ({ t }) => {
 		resolver: yupResolver(schema),
 	});
 
-	const onSubmit = (data) => {
-		console.log(data);
-		const array = data.SelectTarget.split(',');
-		let z = convertTargetStringToNum(array, listTarget);
+	const onSubmit = (resProfile) => {
+		// console.log(resProfile);
+		// const array = resProfile.SelectTarget.split(',');
+		// let z = convertTargetStringToNum(array, listTarget);
 
 		const newProfile = {
-			...data,
+			...resProfile,
 			Avatar: avatar,
-			BirthDay: dayjs(data.BirthDay).format('DD/MM/YYYY'),
-			Target: z.join(','),
+			BirthDay: dayjs(resProfile.BirthDay).format('DD/MM/YYYY'),
+			// Target: z.join(','),
 		};
+		console.log(newProfile);
 		onUpdateProfileAPI(newProfile);
 	};
 
@@ -196,8 +181,8 @@ const StudentProfile = ({ t }) => {
 	};
 	const onUpdateProfileAPI = async (params) => {
 		setLoadingUpdateProfile(true);
-		const res = await updateProfileAPI(params);
-		if (res.Code === 1) {
+		const res = await UpdateProfile(params);
+		if (res.Code === 200) {
 			updateProfileToastSuccess();
 		} else {
 			updateProfileToastFail();
@@ -209,13 +194,14 @@ const StudentProfile = ({ t }) => {
 	};
 	const handleUploadImage = async (e) => {
 		setLoadingAvatar(true);
+		console.log('hinh ne', files);
 		let files = e.target.files;
 		if (!files) {
 			setLoadingAvatar(false);
 			return;
 		} else {
-			const res = await uploadImageToServer(files);
-			if (res.Code === 1) {
+			const res = await UploadFilePost(files);
+			if (res.Code === 200) {
 				//Upload Avatar success
 				const avatar = res.Data[0].UrlIMG;
 				setAvatar(avatar);
@@ -281,11 +267,11 @@ const StudentProfile = ({ t }) => {
 																	? profile.AvatarThumnail
 																	: '/static/assets/img/default-avatar.png'
 															}
-															onError={(e) => {
-																e.target.onerror = null;
-																e.target.src =
-																	'/static/assets/img/default-avatar.png';
-															}}
+															// onError={(e) => {
+															// 	e.target.onerror = null;
+															// 	e.target.src =
+															// 		'/static/assets/img/default-avatar.png';
+															// }}
 														/>
 													</label>
 												</div>
@@ -371,31 +357,6 @@ const StudentProfile = ({ t }) => {
 											)}
 										</div>
 									</div>
-									<div className="form-row align-items-center">
-										<div className="form-group col-sm-3 col-label-fixed">
-											<p className="mg-b-0 tx-medium">{t('country')}:</p>
-										</div>
-										<div className="form-group col-sm-9">
-											{!!TimeZoneList && TimeZoneList.length > 0 && (
-												<select
-													name="TimeZoneID"
-													ref={register}
-													defaultValue={
-														profile.TimeZoneID ? profile.TimeZoneID : '0'
-													}
-													className="form-control"
-												>
-													<option value="0">Chọn Múi Giờ</option>
-													<RenderListTimeZone list={TimeZoneList} />
-												</select>
-											)}
-											{/* {errors.TimeZoneID && (
-												<span className="text-danger d-block mt-2">
-													{errors.TimeZoneID.message}
-												</span>
-											)} */}
-										</div>
-									</div>
 								</div>
 								<div className="col-md-6">
 									<div className="form-row align-items-center">
@@ -457,31 +418,6 @@ const StudentProfile = ({ t }) => {
 												<option value="2">Nữ</option>
 												<option value="3">Khác</option>
 											</select>
-										</div>
-									</div>
-									<div className="form-row align-items-center">
-										<div className="form-group col-sm-3 col-label-fixed">
-											<p className="mg-b-0 tx-medium">{t('time-zone')}:</p>
-										</div>
-										<div className="form-group col-sm-9">
-											{!!TimeZoneList && TimeZoneList.length > 0 && (
-												<select
-													name="TimeZoneID"
-													ref={register}
-													defaultValue={
-														profile.TimeZoneID ? profile.TimeZoneID : '0'
-													}
-													className="form-control"
-												>
-													<option value="0">Chọn Múi Giờ</option>
-													<RenderListTimeZone list={TimeZoneList} />
-												</select>
-											)}
-											{errors.TimeZoneID && (
-												<span className="text-danger d-block mt-2">
-													{errors.TimeZoneID.message}
-												</span>
-											)}
 										</div>
 									</div>
 								</div>

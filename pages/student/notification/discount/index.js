@@ -149,6 +149,12 @@ const Discount = ({ t }) => {
 
 	const getAPI = async (params) => {
 		setLoading(true);
+		let UID = null;
+		let Token = null;
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
 		const res = await GetNotifications(params);
 		if (res.Code === 200) {
 			setState(res.Data);

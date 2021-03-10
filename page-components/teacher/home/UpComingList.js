@@ -186,7 +186,9 @@ const UpComingList = ({ itemShow, t }) => {
 						<table className="table table-borderless responsive-table">
 							<thead>
 								<tr className="tx-gray-600 tx-normal">
-									<th>{t('thoi-gian')}</th>
+									<th>{t('vn-time')}</th>
+									<th>{t('your-time')}</th>
+									<th>{t('course')}</th>
 									<th>{t('lesson')}</th>
 									<th>{t('student')}</th>
 									<th className="tx-right">{t('actions')}</th>
@@ -210,6 +212,14 @@ const UpComingList = ({ itemShow, t }) => {
 											<Skeleton count={1} />
 											<Skeleton count={1} />
 										</td>
+										<td>
+											<Skeleton count={1} />
+											<Skeleton count={1} />
+										</td>
+										<td>
+											<Skeleton count={1} />
+											<Skeleton count={1} />
+										</td>
 									</tr>
 								) : !!state && state.length > 0 ? (
 									[...state].map(
@@ -218,43 +228,21 @@ const UpComingList = ({ itemShow, t }) => {
 												<tr key={`${index}`}>
 													<td className="clr-time">
 														<div className="mg-b-5">
-															<span className=" mg-r-5 tx-nowrap d-inline-block">
-																<FontAwesomeIcon
-																	icon="clock"
-																	className="fa fa-clock tx-primary"
-																/>{' '}
-																<span className="tx-medium">
-																	{t('vn-time')}
-																</span>
-																:
-															</span>
 															<span className="">{ls.VNTime}</span>
 														</div>
+													</td>
+													<td>
 														<div className="">
-															<span className=" mg-r-5 tx-nowrap d-inline-block">
-																<FontAwesomeIcon
-																	icon="clock"
-																	className="fa fa-clock tx-primary"
-																/>{' '}
-																<span className="tx-medium">
-																	{t('your-time')}
-																</span>
-																:
-															</span>
 															<span className="">{ls.TimezoneName}</span>
 														</div>
 													</td>
 													<td className="clr-lesson">
 														<div className="mg-b-5">
-															<span className=" mg-r-5 tx-medium">
-																{t('course')}:
-															</span>
 															<span className="">{ls.CoursesName}</span>
 														</div>
+													</td>
+													<td>
 														<div className="">
-															<span className=" mg-r-5 tx-medium">
-																{t('lesson')}:
-															</span>
 															<span className="">{ls.LessonName}</span>
 														</div>
 													</td>
@@ -290,29 +278,13 @@ const UpComingList = ({ itemShow, t }) => {
 																{t('join-class')}
 															</span>
 														</a>
-														<a
-															href={true}
-															onClick={(e) => {
-																e.preventDefault();
-																handleCancelLesson(ls);
-															}}
-															className="btn btn-danger btn-sm"
-														>
-															<FontAwesomeIcon
-																icon="times"
-																class="fas fa-times"
-															/>
-															<span className="d-none d-xl-inline mg-l-5">
-																{t('cancel')}
-															</span>
-														</a>
 													</td>
 												</tr>
 											),
 									)
 								) : (
 									<tr>
-										<td colSpan={5}>
+										<td colSpan={6}>
 											<div className="empty-error tx-center mg-y-30 bg-white mg-x-auto">
 												<img
 													src="/static/img/no-data.svg"

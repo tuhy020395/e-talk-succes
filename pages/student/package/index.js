@@ -80,6 +80,7 @@ const Package = ({ t }) => {
 
 	const getAPI = async (params) => {
 		setLoading(true);
+
 		const res = await GetPackageHistory(params);
 		console.log(res);
 		if (res.Code === 200) {
@@ -92,11 +93,18 @@ const Package = ({ t }) => {
 		setLoading(false);
 	};
 	useEffect(() => {
+		let UID = null;
+		let Token = null;
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
+		console.log(UID);
 		getAPI({
 			Search: '',
-			UID: 61241,
+			UID: UID,
 			Page: 1,
-			Token: '',
+			Token: Token,
 		});
 	}, []);
 

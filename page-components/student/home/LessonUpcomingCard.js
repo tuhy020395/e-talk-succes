@@ -44,6 +44,7 @@ const LessonUpcomingCard = ({
 			LessionMaterial,
 			LessionName,
 			SpecialRequest,
+			CourseName,
 			date,
 			start,
 			end,
@@ -100,7 +101,7 @@ const LessonUpcomingCard = ({
 					<div>
 						<h5 className="mg-b-10 mg-t-10 mg-sm-t-0">
 							<span className="badge badge-warning">Incoming</span>{' '}
-							<span className="no-hl course-name tx-bold">{LessionName}</span>
+							<span className="no-hl course-name tx-bold">{CourseName}</span>
 						</h5>
 						<div className="course-information tx-14">
 							<span className="mg-r-15 tx-gray-500 d-inline-block">

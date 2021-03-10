@@ -392,91 +392,20 @@ const ProfileTeacher = ({ t }) => {
 	};
 
 	useEffect(() => {
-		//initCalendar();
+		let UID = null;
+		let Token = null;
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
+		console.log(UID);
 		getAPI({
 			Search: '',
-			Nation: '',
-			LevelPurpose: '',
-			UID: 0,
+			UID: UID,
 			Token: '',
 			Page: 1,
 		});
-
-		/*    $('#display-schedule').on('change', function () {
-      if ($('#display-schedule').prop('checked') === true) {
-        $('.tutor-schedule').slideDown();
-      } else {
-        $('.tutor-schedule').slideUp();
-      }
-    }); */
-
-		// $(document).on('click', '.day-block', handleChangeDate.bind(this));
-		// $('#js-select-today').on('click', handleChangeDate.bind(this));
 	}, []);
-	// const [currentPage, setCurrentPage] = useState(0);
-	// const PER_PAGE = 6;
-	// const offset = currentPage * PER_PAGE;
-	// console.log(data.TeacherList);
-	// const currentPageData = data.TeacherList.map((post, index) => (
-	// 	<li key={'teacher' + index}>
-	// 		<div className="infomation-content">
-	// 			<div className="infomation-top">
-	// 				<div className="tutor-infomation">
-	// 					<h3 className="infomation-job">{data.TeacherList[0].Job}</h3>
-	// 					<p className="infomation-name">{data.TeacherList[0].Name}</p>
-	// 					<p className="infomation-country">
-	// 						Quốc gia: <span>{data.TeacherList[0].Country}</span>
-	// 					</p>
-	// 					<p className="infomation-exp">
-	// 						Kinh nghiệm giảng dạy: <span>{data.TeacherList[0].Exp}</span>
-	// 					</p>
-	// 				</div>
-	// 				<div className="box-img-teacher">
-	// 					<img
-	// 						src="/static/img/avatar.jpg"
-	// 						className="rounded-circle"
-	// 						alt=""
-	// 					/>
-	// 				</div>
-	// 			</div>
-	// 			<div className="infomation-bottom">
-	// 				<div className="tutor-rating-star">
-	// 					<span className="number-start">1</span>
-	// 					<div className="rating-stars">
-	// 						<span className="empty-stars">
-	// 							<i className="far fa-star"></i>
-	// 							<i className="far fa-star"></i>
-	// 							<i className="far fa-star"></i>
-	// 							<i className="far fa-star"></i>
-	// 							<i className="far fa-star"></i>
-	// 						</span>
-	// 						<span className="filled-stars" style={{ width: '20%' }}>
-	// 							<i className="star fa fa-star"></i>
-	// 							<i className="star fa fa-star"></i>
-	// 							<i className="star fa fa-star"></i>
-	// 							<i className="star fa fa-star"></i>
-	// 							<i className="star fa fa-star"></i>
-	// 						</span>
-	// 					</div>
-	// 				</div>
-	// 				<a
-	// 					href="/student/booked-schedule/calendar"
-	// 					className="submit-search btn border-radius-5 btn-block w-100 bg-green"
-	// 				>
-	// 					<i className="fa fa-clone"></i> Đặt lịch học
-	// 				</a>
-	// 				<a
-	// 					href="/teacher/profile"
-	// 					className="submit-search btn border-radius-5 btn-block w-100 bg-blue"
-	// 				>
-	// 					<i className="fa fa-user"></i> Xem thông tin
-	// 				</a>
-	// 			</div>
-	// 		</div>
-	// 	</li>
-	// ));
-
-	// const pageCount = Math.ceil(data.TeacherList.length / PER_PAGE);
 
 	function handlePageClick({ selected: selectedPage }) {
 		setCurrentPage(selectedPage);
@@ -486,7 +415,7 @@ const ProfileTeacher = ({ t }) => {
 		<>
 			<h1 className="main-title-page">{t('profile-teacher')}</h1>
 			<div className="media-body-wrap pd-15 shadow">
-				<div
+				{/* <div
 					className="form-row"
 					style={{ maxWidth: 600, zIndex: 2, position: 'relative' }}
 				>
@@ -509,7 +438,7 @@ const ProfileTeacher = ({ t }) => {
 							{t('search')}
 						</a>
 					</div>
-				</div>
+				</div> */}
 
 				<div className="filter-group pd-t-5 mg-t-15 bd-t" id="list-tutor">
 					<div className="filter-row row">
@@ -633,118 +562,6 @@ const ProfileTeacher = ({ t }) => {
 									<h6 className="tx-danger  mg-t-30">No teacher found.</h6>
 								</div>
 							)}
-							{/* {!!teachersList && teachersList.length > 0 ? (
-								<div className="table-tutor">
-									<ul className="list-tutors">
-										{teachersList.map((item) => (
-											<li className="tutor" key={item.TeacherUID}>
-												<div className="totor-detail">
-													<Link
-														href={`/student/teacher-profile/[tid]`}
-														as={`/student/teacher-profile/${item.TeacherUID}`}
-													>
-														<a href={true} className="tutor-wrap no-hl">
-															<span className="tutor-avatar">
-																<img
-																	src={
-																		item.TeacherIMG
-																			? item.TeacherIMG
-																			: '/static/assets/img/default-avatar.png'
-																	}
-																	alt="Avatar"
-																	onError={(e) => {
-																		e.target.onerror = null;
-																		e.target.src =
-																			'/static/assets/img/default-avatar.png';
-																	}}
-																/>
-															</span>
-															<div className="tutor-infomation pd-5">
-																<div className="tutor-info">
-																	<div className="tutor-rating-star">
-																		<div className="rating-stars">
-																			<span className="empty-stars">
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																			</span>
-																			<span
-																				className="filled-stars"
-																				style={{ width: `${item.Rate * 20}%` }}
-																			>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																				<i className="star fa fa-star"></i>
-																			</span>
-																		</div>
-																		<div className="tutor-rate-point">
-																			{item.Rate.toFixed(1)}
-																		</div>
-																	</div>
-																</div>
-																<h6 className="mg-t-5">
-																	<span
-																		className={`flag-icon flag-icon-${
-																			item.National
-																				? nationMapToFlag(item.National)
-																				: 'vn'
-																		} flag-icon-squared`}
-																	></span>{' '}
-																	{item.TeacherName}
-																</h6>
-																<p>Lịch dạy ngày: {'20/10/2020'}</p>
-															</div>
-														</a>
-													</Link>
-													<div className="tutor-schedule d-block custom-student">
-														<ul className="ul-schedule">
-															<ListSchedule
-																onBookStudyTimeID={onBookState.StudyTimeID}
-																onBookTeacherUID={onBookState.TeacherUID}
-																onBookDate={onBookState.date}
-																learnTime={learnTime}
-																TeacherUID={item.TeacherUID}
-																TeacherIMG={item.TeacherIMG}
-																TeacherName={item.TeacherName}
-																Rate={item.Rate}
-																date={state.date}
-																Start={state.startTime}
-																End={state.endTime}
-																handleBooking={onHandleBooking}
-															/>
-														</ul>
-													</div>
-												</div>
-											</li>
-										))}
-									</ul>
-									{pageSize < totalResult && (
-										<Pagination
-											innerClass="pagination justify-content-end mt-3"
-											activePage={page}
-											itemsCountPerPage={pageSize}
-											totalItemsCount={totalResult}
-											pageRangeDisplayed={3}
-											itemClass="page-item"
-											linkClass="page-link"
-											onChange={handlePageChange.bind(this)}
-										/>
-									)}
-								</div>
-							) : (
-								<div className="pd-y-30 tx-center dispaly-none">
-									<img
-										src="/static/img/no-teacher-found.svg"
-										className="wd-300 mg-x-auto"
-										alt="teacher"
-									/>
-									<h6 className="tx-danger  mg-t-30">No teacher found.</h6>
-								</div>
-							)} */}
 						</div>
 					</div>
 

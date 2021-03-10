@@ -169,11 +169,16 @@ const AttendanceRecord = ({ t }) => {
 		setIsLoading(false);
 	};
 	useEffect(() => {
+		console.log(UID);
+		let UID = null;
+		let Token = null;
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
 		getAPI({
-			todate: '',
-			fromdate: '',
-			UID: '',
-			Token: '',
+			UID: UID,
+			Token: Token,
 			Page: 1,
 		});
 	}, []);
@@ -181,7 +186,7 @@ const AttendanceRecord = ({ t }) => {
 		setIsLoading(true);
 		console.log(fromDate);
 		try {
-			const res = await getAllClass({
+			const res = await GetAttendanceRecord({
 				Page: parseInt(pageNumber),
 				Status: parseInt(filterStatusAllClass.value),
 				fromDate: fromDate ? DateTimeFormat.format(new Date(fromDate)) : '',
@@ -208,12 +213,7 @@ const AttendanceRecord = ({ t }) => {
 	return (
 		<>
 			<h1 className="main-title-page">{t('attendance-record')}</h1>
-			<div className="d-flex align-items-center justify-content-between mg-b-15 flex-wrap">
-				{/* <div className="wd-sm-250 mg-b-15 mg-md-b-0">
-					<div className="search-form">
-						<SearchBox />
-					</div>
-				</div> */}
+			{/* <div className="d-flex align-items-center justify-content-between mg-b-15 flex-wrap">
 				<div
 					className="d-flex from-to-group wd-100p flex-md-nowrap flex-wrap wd-md-500"
 					id="filter-time"
@@ -230,9 +230,9 @@ const AttendanceRecord = ({ t }) => {
 								isClearable={!!fromDate ? true : false}
 								startDate={fromDate}
 								endDate={toDate}
-							/>
-							{/* <input type="text" name="start-day " onChange={(value) =>  setFromDate(value)} className="form-control datetimepicker from-date" placeholder="From date" /> */}
-						</div>
+							/> */}
+			{/* <input type="text" name="start-day " onChange={(value) =>  setFromDate(value)} className="form-control datetimepicker from-date" placeholder="From date" /> */}
+			{/* </div>
 						<div className="col">
 							<DatePicker
 								dateFormat="dd/MM/yyyy"
@@ -258,7 +258,7 @@ const AttendanceRecord = ({ t }) => {
 						</button>
 					</div>
 				</div>
-			</div>
+			</div> */}
 
 			<div className="card mg-b-30">
 				<div className="card-body">

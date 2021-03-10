@@ -123,23 +123,6 @@ const TableView = ({ t }) => {
 	const [fromDate, setFromDate] = useState('');
 	const [toDate, setToDate] = useState('');
 	const [data, setData] = useState();
-	// const getUpcomingSchedule = async () => {
-	// 	setSchedules(fakeData);
-	// 	setIsLoading(true);
-	// 	try {
-	// 		const res = await GetBookingScheduleForStudent(params);
-	// 		if (res.Code === 1) {
-	// 			setSchedules(res.Data);
-	// 			setSchedules(fakeData);
-	// 			setPageSize(res.PageSize);
-	// 			setTotalResult(res.TotalResult);
-	// 		}
-	// 		res.Code === 0 && console.log('Lỗi API, Code 0');
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// 	setIsLoading(false);
-	// };
 	const getAPI = async (params) => {
 		setIsLoading(true);
 		const res = await GetBookingScheduleForStudent(params);
@@ -155,12 +138,20 @@ const TableView = ({ t }) => {
 	};
 
 	useEffect(() => {
+		let UID = null;
+		let Token = null;
+
+		// GET UID and Token
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
 		getAPI({
 			fromdate: '',
 			todate: '',
-			UID: '',
+			UID: UID,
 			Page: 1,
-			Token: '',
+			Token: Token,
 		});
 	}, []);
 
@@ -269,7 +260,7 @@ const TableView = ({ t }) => {
 											<td>{ls.Date}</td>
 											<td>{ls.TimeStudy}</td>
 											<td>{ls.ClassName}</td>
-											<td>{ls.Status}</td>
+											<td>{ls.StatusName}</td>
 										</tr>
 									))
 								) : (

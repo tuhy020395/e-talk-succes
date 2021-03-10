@@ -83,25 +83,25 @@ export const getProfile = async () => {
 	return result;
 };
 
-export const GetListTeacher = async (params) => {
-	let result;
-	try {
-		let res = await instance.get(path + '/GetListTeacher', {
-			params: {
-				UID: appSettings.UID,
-				Nation: params.Nation,
-				Search: params.Search,
-				Token: params.Token,
-				Page: params.Page,
-				LevelPurpose: params.LevelPurpose,
-			},
-		});
-		result = res.data;
-	} catch (error) {
-		return error.message ? error.message : (result = '');
-	}
-	return result;
-};
+// export const GetListTeacher = async (params) => {
+// 	let result;
+// 	try {
+// 		let res = await instance.get(path + '/GetListTeacher', {
+// 			params: {
+// 				UID: appSettings.UID,
+// 				Nation: params.Nation,
+// 				Search: params.Search,
+// 				Token: params.Token,
+// 				Page: params.Page,
+// 				LevelPurpose: params.LevelPurpose,
+// 			},
+// 		});
+// 		result = res.data;
+// 	} catch (error) {
+// 		return error.message ? error.message : (result = '');
+// 	}
+// 	return result;
+// };
 export const GetTeacherProfile = async (params) => {
 	let result;
 	try {
@@ -203,16 +203,17 @@ export const GetBookingScheduleForStudent = async (params) => {
 };
 export const GetBookingCalendarForStudent = async (params) => {
 	let result;
+
+	console.log('Params API: ', params);
+
 	try {
 		let res = await instance.get(path + '/GetBookingCalendarForStudent', {
 			params: {
-				...params,
-				TeacherUID: '61230',
-				Start: '08/03/2021',
-				End: '14/03/2021',
-				UID: '61215',
-				Token: '',
-				Page: 1,
+				TeacherUID: params.TeacherID,
+				Start: params.start,
+				End: params.end,
+				UID: params.UID,
+				Token: params.Token,
 			},
 		});
 		result = res.data;
@@ -253,7 +254,7 @@ export const setEventAvailable = async (params, ...ars) => {
 		formdata.append('pagekageID', '18');
 		formdata.append('title', '');
 		formdata.append('courseID', '10');
-		formdata.append('teacherID', '61230');
+		formdata.append('teacherID', params.teacher);
 		console.log('form data', formdata);
 		let res = await instance.post(path + '/StudentBooking', formdata, {});
 		result = res.data;
@@ -625,6 +626,44 @@ export const GetEvaluationContent = async () => {
 				FeeConfirmID: 8,
 				token: '',
 			},
+		});
+		result = res.data;
+	} catch (error) {
+		return error.message ? error.message : (result = '');
+	}
+	return result;
+};
+export const UpdateProfile = async (params) => {
+	let result;
+	try {
+		let res = await instance.get(path + '/UpdateProfile', {
+			params: {
+				UID: params.UID,
+				Token: params.Token,
+			},
+			//Param: int BookingID, int UID ? 0, string Token ? null
+		});
+		result = res.data;
+	} catch (error) {
+		return error.message ? error.message : (result = '');
+	}
+	return result;
+};
+
+export const GetListTeacher = async (params) => {
+	let result;
+
+	console.log('Params trong E-Talk: ', params);
+
+	try {
+		let res = await instance.get(path + '/API_LoadTeacher', {
+			params: {
+				Search: '',
+				UID: params.UID,
+				Token: params.Token,
+				Page: 1,
+			},
+			//Param: int BookingID, int UID ? 0, string Token ? null
 		});
 		result = res.data;
 	} catch (error) {

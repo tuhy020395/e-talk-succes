@@ -218,6 +218,7 @@ const Home = ({ t }) => {
 	};
 
 	const getAPI = async () => {
+		console.log('data', res);
 		const res = await LessionHistory();
 
 		setLoading(true);
@@ -445,6 +446,7 @@ const Home = ({ t }) => {
 											avatar={item.Avatar}
 											TeacherName={item.TeacherName}
 											LessionName={item.LessionName}
+											CourseName={item.CourseName}
 											LessionMaterial={item.Material}
 											SpecialRequest={item.SpecialRequest}
 											start={convertDateFromTo(item.ScheduleTimeVN).fromTime}

@@ -57,14 +57,15 @@ const StudentComment = ({ TeacherUID }) => {
 						state.length > 0 &&
 						state.map((item, index) => (
 							<StudentCommentItem
-								key={index}
-								StudentUID={item.StudentUID}
+								key={item.ElearnBookingID}
+								ScheduleTimeVN={item.ScheduleTimeVN}
+								TeacherName={item.TeacherName}
+								TeacherIMG={item.TeacherIMG}
+								EvaluationID={item.EvaluationID}
+								Note={item.Note}
 								CreatedDate={item.CreatedDate}
-								StudentName={item.StudentName}
-								StudentIMG={item.StudentIMG}
-								Evaluation={item.Evaluation}
 								Rate={item.Rate}
-								Lession={item.Lession}
+								LinkDetail={item.LinkDetail}
 							/>
 						))}
 				</div>

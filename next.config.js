@@ -41,10 +41,12 @@ module.exports = withOffline(
 						},
 					],
 				},
+
 				rewrites: async () => nextI18NextRewrites(localeSubpaths),
 				publicRuntimeConfig: {
 					localeSubpaths,
 				},
+				trailingSlash: true,
 				shallowRender: true,
 			}),
 		),

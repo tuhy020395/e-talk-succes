@@ -171,10 +171,12 @@ const LessonItem = ({
 	LessionName,
 	PackgaeName,
 	rate,
+	ContentFeedBack,
 	StudyDate,
 	LessonDetail,
 	start,
 	end,
+	DocumentRate,
 	date,
 	TeacherUID,
 	TeacherName,
@@ -182,8 +184,6 @@ const LessonItem = ({
 	StatusString,
 }) => {
 	const [show, setShow] = useState(false);
-	const handleClose = () => setShow(false);
-	const handleShow = () => setShow(true);
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const updateState = (key, value) => {
 		dispatch({ type: 'UPDATE_STATE', payload: { key, value } });
@@ -244,16 +244,31 @@ const LessonItem = ({
 			<td style={{ letterSpacing: '0.5px' }}>{CourseName}</td>
 			<td>{PackgaeName}</td>
 			<td className="tx-nowrap">
-				<Link
-					href={`/student/teacher-profile/[id]`}
-					as={`/student/teacher-profile/${TeacherUID}`}
-				>
-					<a href={true}>{TeacherName}</a>
-				</Link>
+				<span>{TeacherName}</span>
 			</td>
 			<td style={{ whiteSpace: 'pre-line' }}>{StudyDate}</td>
 			<td className="tx-nowrap">
-				<span className="tx-success"></span>
+				<span className="tx-success">
+					<div className="raiting-box">
+						<div className={classes.root}>
+							<div className="rating-item">
+								<span className="txt-rating">Rating:</span>
+								<Rating
+									name="rating"
+									defaultValue={DocumentRate}
+									size="large"
+									onClick={(e) =>
+										updateState(
+											'rate',
+											parseInt(e.target.getAttribute('value')),
+										)
+									}
+								/>
+							</div>
+						</div>
+						<StatelessTextarea name={ContentFeedBack}></StatelessTextarea>
+					</div>
+				</span>
 				<ToastContainer
 					position="top-right"
 					autoClose={2000}
@@ -265,112 +280,6 @@ const LessonItem = ({
 					draggable
 					pauseOnHover
 				/>
-			</td>
-			<td style={{ textAlign: 'right' }}>
-				<Button
-					className="btn btn-info btn-icon btn-evalation"
-					onClick={handleShow}
-				>
-					<i className="fas fa-file-alt mg-r-10"></i>
-					Đánh giá
-				</Button>
-				<Modal show={show} onHide={handleClose}>
-					<Modal.Header closeButton>
-						<Modal.Title>Thông tin đánh giá</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<div className="raiting-box">
-							<div className={classes.root}>
-								<div className="rating-item">
-									<span className="txt-rating">Kết nối mạng:</span>
-									<Rating
-										name="rating-1"
-										defaultValue={0}
-										size="large"
-										onClick={(e) =>
-											updateState(
-												'rate',
-												parseInt(e.target.getAttribute('value')),
-											)
-										}
-									/>
-								</div>
-								<div className="rating-item">
-									<span className="txt-rating">Sách / tài liệu:</span>
-									<Rating
-										name="rating-2"
-										defaultValue={0}
-										size="large"
-										onClick={(e) =>
-											updateState(
-												'rate',
-												parseInt(e.target.getAttribute('value')),
-											)
-										}
-									/>
-								</div>
-								<div className="rating-item">
-									<span className="txt-rating">Hiệu quả giáo viên:</span>
-									<Rating
-										name="rating-3"
-										defaultValue={0}
-										size="large"
-										onClick={(e) =>
-											updateState(
-												'rate',
-												parseInt(e.target.getAttribute('value')),
-											)
-										}
-									/>
-								</div>
-								<div className="rating-item">
-									<span className="txt-rating">Hài lòng của học viên:</span>
-									<Rating
-										name="rating-4"
-										defaultValue={0}
-										size="large"
-										onClick={(e) =>
-											updateState(
-												'rate',
-												parseInt(e.target.getAttribute('value')),
-											)
-										}
-									/>
-								</div>
-							</div>
-							<StatelessTextarea
-								placeholder="General feedback..."
-								handleChangeValue={(e) => updateState('note', e.target.value)}
-							></StatelessTextarea>
-						</div>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button
-							className="btn btn-info btn-icon btn-evalation"
-							onClick={handleClose}
-						>
-							Close
-						</Button>
-						<Button
-							className="btn btn-info btn-icon btn-evalation mar-l-10"
-							onClick={_submitFeedback}
-						>
-							{submitLoading ? (
-								<span
-									className="spinner-border wd-20 ht-20 mar-r-5"
-									role="status"
-								>
-									<span className="sr-only">Submitting...</span>
-								</span>
-							) : (
-								<>
-									<FontAwesomeIcon icon="save" className="mar-r-5" />
-								</>
-							)}
-							<span>{submitLoading ? 'Submitting...' : 'Submit Feedback'}</span>
-						</Button>
-					</Modal.Footer>
-				</Modal>
 			</td>
 		</tr>
 	);
@@ -445,7 +354,6 @@ const ScholarshipFeedback = ({ t }) => {
 										<th>{t('teacher')}</th>
 										<th>{t('date')}</th>
 										<th>{t('feebback')}</th>
-										<th></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -467,9 +375,6 @@ const ScholarshipFeedback = ({ t }) => {
 												<td>
 													<Skeleton />
 												</td>
-												<td>
-													<Skeleton />
-												</td>
 											</tr>
 											<tr>
 												<td>
@@ -487,14 +392,8 @@ const ScholarshipFeedback = ({ t }) => {
 												<td>
 													<Skeleton />
 												</td>
-												<td>
-													<Skeleton />
-												</td>
 											</tr>
 											<tr>
-												<td>
-													<Skeleton />
-												</td>
 												<td>
 													<Skeleton />
 												</td>
@@ -528,6 +427,8 @@ const ScholarshipFeedback = ({ t }) => {
 												Status={item.Status}
 												StatusString={item.StatusString}
 												StudyDate={item.StudyDate}
+												ContentFeedBack={item.ContentFeedBack}
+												DocumentRate={item.DocumentRate}
 											/>
 										))
 									) : data.length === 0 ? (

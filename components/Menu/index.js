@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withTranslation } from '~/i18n';
 import './index.module.scss';
+import { useAuth } from '~/api/auth.js';
+
 const TeacherMenu = ({ t }) => {
 	return (
 		<ul className="nav nav-aside">
@@ -61,7 +63,7 @@ const TeacherMenu = ({ t }) => {
 							</a>
 						</Link>
 					</li>
-					<li className="">
+					{/* <li className="">
 						<Link
 							href="/teacher/schedule/schedule-log"
 							as="/teacher/schedule/schedule-log"
@@ -71,7 +73,7 @@ const TeacherMenu = ({ t }) => {
 								<span>{t('schedule-log')}</span>
 							</a>
 						</Link>
-					</li>
+					</li> */}
 				</ul>
 			</li>
 			<li className="nav-item with-sub">
@@ -404,7 +406,7 @@ const StudentMenu = ({ t }) => {
 					<span>{t('menu-student:schedule')}</span>
 				</a>
 				<ul>
-					<li className="">
+					{/* <li className="">
 						<Link
 							href="/student/booking-schedule"
 							as="/student/booking-schedule"
@@ -417,7 +419,7 @@ const StudentMenu = ({ t }) => {
 								<span>{t('menu-student:teacher-list')}</span>
 							</a>
 						</Link>
-					</li>
+					</li> */}
 					<li className=" with-sub">
 						<a href={true} className="">
 							<FontAwesomeIcon
@@ -569,7 +571,7 @@ const StudentMenu = ({ t }) => {
 							</a>
 						</Link>
 					</li>
-					<li className="nav-item">
+					{/* <li className="nav-item">
 						<Link href="/student/question" as="/student/question">
 							<a href={true} className="">
 								<FontAwesomeIcon
@@ -579,7 +581,7 @@ const StudentMenu = ({ t }) => {
 								<span>{t('menu-student:f&a')}</span>
 							</a>
 						</Link>
-					</li>
+					</li> */}
 				</ul>
 			</li>
 		</ul>
@@ -587,9 +589,12 @@ const StudentMenu = ({ t }) => {
 };
 
 const Menu = ({ t, isStudent }) => {
-	// useEffect(() => {
-	// 	feather && feather.replace();
-	// }, []);
+	console.log('data User: ', dataUser);
+	const handleClick_logout = () => {
+		let UID = localStorage.getItem('UID');
+		handleLogout(UID);
+	};
+	const { dataUser, handleLogout } = useAuth();
 	return (
 		<>
 			<aside className="aside aside-fixed">
@@ -625,7 +630,7 @@ const Menu = ({ t, isStudent }) => {
 								data-toggle="collapse"
 							>
 								<h6 className="tx-semibold tx-16 mg-b-0 tx-white">
-									Huỳnh Thi Phương Loan
+									{dataUser?.StudentName}
 								</h6>
 								<FontAwesomeIcon
 									icon="angle-down"
@@ -699,11 +704,12 @@ const Menu = ({ t, isStudent }) => {
 									</Link>
 								</li>
 								<li className="nav-item">
-									<a href={true} className="nav-link">
-										<FontAwesomeIcon
-											icon="sign-out-alt"
-											className="fas fa-sign-out-alt"
-										/>{' '}
+									<a
+										href={true}
+										className="nav-link"
+										onClick={() => handleClick_logout()}
+									>
+										<i data-feather="log-out" />
 										<span>{t('sign-out')}</span>
 									</a>
 								</li>

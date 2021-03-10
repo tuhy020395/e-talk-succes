@@ -35,7 +35,7 @@ const BookingCalendar = ({ t }) => {
 
 	let loadingRef = useRef(true);
 
-	const getEventByWeek = async (date) => {
+	const getEventByWeek = async (obj) => {
 		setIsLoading(true);
 
 		var curr = new Date(); // get current date
@@ -52,7 +52,12 @@ const BookingCalendar = ({ t }) => {
 		lastday = lastday.split(' ')[0];
 
 		try {
-			const res = await getListEventsOfWeek({ start: firstday, end: lastday }); // @string date dd/mm/yyyy
+			const res = await getListEventsOfWeek({
+				start: firstday,
+				end: lastday,
+				UID: obj.UID,
+				Token: obj.Token,
+			}); // @string date dd/mm/yyyy
 			console.log(res);
 			if (res.Code === 200 && res.Data.length > 0) {
 				const newEvents = res.Data.map((event) => {
@@ -81,21 +86,33 @@ const BookingCalendar = ({ t }) => {
 		e.preventDefault();
 	};
 
-	useEffect(() => {
-		getEventByWeek({
-			UID: 61230,
-			start: '01/03/2021',
-			end: '08/03/2021',
-			Token: '',
-		});
-		console.log(activeDate);
-	}, [activeDate]);
+	// useEffect(() => {
+	// 	getEventByWeek({
+	// 		UID: 61230,
+	// 		start: '01/03/2021',
+	// 		end: '08/03/2021',
+	// 		Token: '',
+	// 	});
+	// 	console.log(activeDate);
+	// }, [activeDate]);
 
 	const cleanUp = () => {
 		loadingRef.current && (loadingRef.current = false);
 	};
 
 	useEffect(() => {
+		if (localStorage.getItem('UID')) {
+			let UID = localStorage.getItem('UID');
+			let Token = localStorage.getItem('token');
+
+			getEventByWeek({
+				UID: UID,
+				start: '01/03/2021',
+				end: '08/03/2021',
+				Token: Token,
+			});
+		}
+
 		lottie &&
 			lottie.loadAnimation({
 				container: loadingRef.current, // the dom element that will contain the animation
@@ -116,27 +133,6 @@ const BookingCalendar = ({ t }) => {
 				) : (
 					<FullCalendar data={eventSource} isLoading={isLoading} />
 				)}
-			</div>
-			<div className="notice pd-20 bg-secondary rounded-5 mg-t-20">
-				<h5 className="mg-b-15">
-					<i className="fas fa-file"></i> {t('notes')}:
-				</h5>
-				<ul className="mg-b-0">
-					<li>{t('each-slot-is-25-minutes')}.</li>
-					<li>
-						{t('to-open-a-slot-simply-select-the-time-slot-and-click-on-it')}
-					</li>
-					<li>
-						{t(
-							'to-close-a-slot-simple-select-the-time-slot-and-click-close-button',
-						)}
-					</li>
-					<li>
-						{t(
-							'to-cancel-a-booked-class-select-the-booked-slot-and-click-cancel-the-class',
-						)}
-					</li>
-				</ul>
 			</div>
 		</>
 	);

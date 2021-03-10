@@ -90,10 +90,18 @@ const CourseDuration = ({ t }) => {
 	};
 
 	useEffect(() => {
+		let UID = null;
+		let Token = null;
+
+		// GET UID and Token
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
 		getAPI({
-			UID: 1071,
+			UID: UID,
 			Page: 1,
-			Token: '',
+			Token: Token,
 		});
 	}, []);
 	return (

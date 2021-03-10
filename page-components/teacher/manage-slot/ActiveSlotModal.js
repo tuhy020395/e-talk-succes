@@ -17,6 +17,7 @@ const ActiveSlotModal = ({
 				keyboard={false}
 				centered
 				onHide={closeModal}
+				animation={false}
 			>
 				<Modal.Header closeButton>
 					<Modal.Title>Confirm active</Modal.Title>

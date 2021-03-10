@@ -61,9 +61,13 @@ const formatDateString = (dateStr) => {
 
 const initEvents = [];
 
-let calendar;
+let calendar = null;
 
-const FullCalendar = ({ data = [] }) => {
+const FullCalendar = ({ data = [], teacher, completeBooking }) => {
+	teacher = Number(teacher);
+
+	console.log('TEACHER nè: ', teacher);
+
 	const [activeDate, setActiveDate] = useState(new Date());
 	const [eventSource, setEventSource] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -80,19 +84,23 @@ const FullCalendar = ({ data = [] }) => {
 		date: '',
 	});
 
+	const [changeData, setChangeData] = useState(false);
+
 	const loadingRef = useRef(true);
 
-	const fetchEventByDate = async (date) => {
+	const fetchEventByDate = async (obj) => {
 		setIsLoading(true);
 		try {
 			const res = await GetBookingCalendarForStudent({
-				Date: dayjs(date).format('DD/MM/YYYY'),
+				TeacherID: teacher,
+				UID: obj.UID,
+				start: obj.start,
+				end: obj.end,
+				Token: obj.Token,
 			}); // @string date dd/mm/yyyy
-			console.log(res);
 			if (res.Code === 200 && res.Data.length > 0) {
 				// Hồi nãy nó có filter nữa nên nó chỉ lấy mấy cái empty, nên cái có data k showw
 				const newEvents = res.Data.map((event) => {
-					console.log('kha loz number 1', { event });
 					return {
 						...event,
 						id: event.id,
@@ -106,11 +114,14 @@ const FullCalendar = ({ data = [] }) => {
 						isEmptySlot: event.isEmptySlot,
 						loading: false,
 					};
-					console.log(event);
 				});
 				const sources = calendar.getEventSources();
+
 				if (sources.length > 0) {
-					sources[0].remove();
+					sources.forEach((item) => {
+						item.remove();
+					});
+
 					calendar.addEventSource(newEvents);
 				}
 			}
@@ -120,23 +131,54 @@ const FullCalendar = ({ data = [] }) => {
 		setIsLoading(false);
 	};
 
+	const callFetchEvent = (date) => {
+		let UID = null;
+		let Token = null;
+
+		// GET UID and Token
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
+
+		// GET DATE
+		let cur = new Date();
+
+		let getDate = date.getDate();
+		let testDate = new Date(cur.setDate(getDate + 6)).toUTCString();
+
+		let start = dayjs(date).format('DD/MM/YYYY');
+		let end = dayjs(testDate).format('DD/MM/YYYY');
+
+		// ----
+
+		fetchEventByDate({
+			UID: UID,
+			start: start,
+			end: end,
+			Token: Token,
+		});
+	};
+
 	const triggerNextCalendar = () => {
-		//setIsLoading(true);
-		//setTimeout(() => setIsLoading(false), 3000);
+		setChangeData(true);
+
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log(currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
 	const triggerPrevCalendar = () => {
+		setChangeData(true);
+
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log(currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
@@ -144,8 +186,8 @@ const FullCalendar = ({ data = [] }) => {
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log(currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
@@ -181,70 +223,68 @@ const FullCalendar = ({ data = [] }) => {
 	};
 
 	const onViewChange = (view, el) => {
-		console.log({ view, el });
+		// console.log({ view, el });
 	};
 
 	const _openSlot = async (event) => {
-		console.log('startssss', modalData);
-		console.log('startsssssssssssssssssss', modalData.start);
-		console.log('endddddddddddddddđ', modalData.end);
-		console.log('event range', modalData.start, modalData.end);
-
 		const res = await setEventAvailable({
 			start: modalData.start,
 			end: modalData.end,
+			teacher: teacher,
 		});
-		console.log(res);
 		if (res.Code === 200) {
 			// event.setExtendedProp('loading', false);
+			toast.success('You have booked a lesson successfully', {
+				position: toast.POSITION.TOP_CENTER,
+				autoClose: 2000,
+			});
+			completeBooking && completeBooking();
 		} else {
 			toast.error('Open slot failed', {
 				position: toast.POSITION.TOP_RIGHT,
 				autoClose: 2000,
 			});
-			console.log('Loi  khi goi api');
-		}
-		try {
-			console.log(11111111111111);
-			calendar.addEvent(
-				{
-					id: randomId(),
-					BookingID: 0,
-					start: dayjs(modalData.start).format('DD/MM/YYYY HH:mm'),
-					end: dayjs(modalData.end).format('DD/MM/YYYY HH:mm'),
-					OpeningID: 0,
-					StudyTimeID: 1,
-					TeacherUID: 20,
-					available: true,
-					bookInfo: null,
-					bookStatus: false,
-					eventType: 0,
-					isEmptySlot: false,
-					title: null,
-					start: event.start,
-					end: event.end,
-					loading: true,
-				},
-				true,
-			);
-			console.log(2222222222222);
-			setShowActiveModal(false);
-		} catch (error) {
-			console.log('Error openSlot !', error);
-			alert('Open slot failed !!');
 		}
 		setShowActiveModal(false);
-		fetchEventByDate({
-			UID: 61230,
-			start: '01/03/2021',
-			end: '08/03/2021',
-			Token: '',
-		});
-		initCalendar();
-		setTimeout(() => {
-			calendar.render();
-		}, 500);
-		// setIsLoading(false);
+		// try {
+		// 	calendar.addEvent(
+		// 		{
+		// 			id: randomId(),
+		// 			BookingID: 0,
+		// 			start: dayjs(modalData.start).format('DD/MM/YYYY HH:mm'),
+		// 			end: dayjs(modalData.end).format('DD/MM/YYYY HH:mm'),
+		// 			OpeningID: 0,
+		// 			StudyTimeID: 1,
+		// 			TeacherUID: 20,
+		// 			available: true,
+		// 			bookInfo: null,
+		// 			bookStatus: false,
+		// 			eventType: 0,
+		// 			isEmptySlot: false,
+		// 			title: null,
+		// 			start: event.start,
+		// 			end: event.end,
+		// 			loading: true,
+		// 		},
+		// 		true,
+		// 	);
+		// 	setShowActiveModal(false);
+		// } catch (error) {
+		// 	console.log('Error openSlot !', error);
+		// 	alert('Open slot failed !!');
+		// }
+
+		// fetchEventByDate({
+		// 	UID: 61230,
+		// 	start: '01/03/2021',
+		// 	end: '08/03/2021',
+		// 	Token: '',
+		// });
+		// initCalendar();
+		// setTimeout(() => {
+		// 	calendar.render();
+		// }, 500);
+		// // setIsLoading(false);
 	};
 
 	// const afterEventAdded = async (eventInfo) => {
@@ -270,7 +310,7 @@ const FullCalendar = ({ data = [] }) => {
 	// 	}
 	// };
 	const showCancelReasonModal = (event) => {
-		console.log(showCancelReasonModal);
+		// console.log(showCancelReasonModal);
 		try {
 			event.preventDefault();
 			const cancelBtn = event.target;
@@ -331,39 +371,41 @@ const FullCalendar = ({ data = [] }) => {
 	};
 
 	const _cancelSlot = async (event) => {
-		setIsLoading(true);
-		setcheck(true);
-		$('#md-cancel-slot').modal('hide');
+		// setIsLoading(true);
+		// setcheck(true);
+		setShowActiveModal(false);
 		try {
 			const res = await StudentCancelBooked({
 				BookingID: event.BookingID,
 			});
 			if (res.Code === 200) {
-				cancelBookedEvent(event);
-				// toast.success('You have canceled a lesson successfully', {
-				// 	position: toast.POSITION.TOP_CENTER,
-				// 	autoClose: 2000,
-				// });
+				// cancelBookedEvent(event);
+				completeBooking && completeBooking();
+				toast.success('You have canceled a lesson successfully', {
+					position: toast.POSITION.TOP_CENTER,
+					autoClose: 2000,
+				});
+				$('body').find('.popover.show').remove();
 			} else {
-				// toast.error(res?.Message ?? 'Cancel slot failed', {
-				// 	position: toast.POSITION.TOP_CENTER,
-				// 	autoClose: 2000,
-				// });
+				toast.error(res?.Message ?? 'Cancel slot failed', {
+					position: toast.POSITION.TOP_CENTER,
+					autoClose: 2000,
+				});
 			}
 		} catch (error) {
 			console.log('Error openSlot !', error);
 		}
-		fetchEventByDate({
-			UID: 61230,
-			start: '01/03/2021',
-			end: '08/03/2021',
-			Token: '',
-		});
-		initCalendar();
-		setTimeout(() => {
-			calendar.render();
-		}, 500);
-		setIsLoading(false);
+		// fetchEventByDate({
+		// 	UID: 61230,
+		// 	start: '01/03/2021',
+		// 	end: '08/03/2021',
+		// 	Token: '',
+		// });
+		// initCalendar();
+		// setTimeout(() => {
+		// 	calendar.render();
+		// }, 500);
+		// setIsLoading(false);
 	};
 
 	const onSubmit = (e) => {
@@ -371,6 +413,7 @@ const FullCalendar = ({ data = [] }) => {
 	};
 
 	let $toggleCheckbox;
+
 	const initCalendar = () => {
 		//const createEventSlots
 		const calendarEl = document.getElementById('js-book-calendar');
@@ -379,7 +422,7 @@ const FullCalendar = ({ data = [] }) => {
 		const $cancelModal = $('#md-cancel-slot');
 
 		const eventDidMount = (args) => {
-			console.log('eventDidMount', args);
+			// console.log('eventDidMount', args);
 			const { event, el } = args;
 			const data = {
 				...event.extendedProps,
@@ -492,7 +535,7 @@ const FullCalendar = ({ data = [] }) => {
 
 			const { start, end, id, extendedProps } = args.event;
 
-			console.log('kha', extendedProps.StartDate);
+			// console.log('kha', extendedProps.StartDate);
 
 			setModalData({
 				...modalData,
@@ -500,7 +543,7 @@ const FullCalendar = ({ data = [] }) => {
 				end: extendedProps.EndDate,
 			});
 
-			console.log('...element.classList', ...element.classList);
+			// console.log('...element.classList', ...element.classList);
 			if (
 				extendedProps.available ||
 				[...element.classList].includes('booked-slot') ||
@@ -531,13 +574,11 @@ const FullCalendar = ({ data = [] }) => {
 			expandRows: true,
 			slotMinTime: '00:00',
 			slotMaxTime: '24:00',
-			events: data
-				// .filter((x) => x.isEmptySlot === false)
-				.map((y) => ({
-					...y,
-					id: randomId(),
-					loading: true,
-				})), //Filter for demo
+			events: data?.map((y) => ({
+				...y,
+				id: randomId(),
+				loading: true,
+			})), //Filter for demo
 			// event: [],
 			headerToolbar: {
 				start: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek', // will normally be on the left. if RTL, will be on the right
@@ -567,7 +608,7 @@ const FullCalendar = ({ data = [] }) => {
 			},
 			// select: emptyCellSelect,
 			slotLabelContent: function (arg) {
-				console.log('slotLabelContent', arg);
+				// console.log('slotLabelContent', arg);
 				const hour = arg.date.getHours();
 
 				let templateEl = document.createElement('div');
@@ -624,7 +665,7 @@ const FullCalendar = ({ data = [] }) => {
 			eventContent: function (args) {
 				let templateEl = document.createElement('div');
 				const { event, isPast, isStart } = args;
-				console.log('isPast', isPast);
+
 				const {
 					bookInfo,
 					eventType,
@@ -642,7 +683,7 @@ const FullCalendar = ({ data = [] }) => {
 					openID: event.OpenID,
 				};
 
-				console.log(data);
+				// console.log(data);
 				const html = `
                     ${
 											!isEmptySlot
@@ -693,8 +734,9 @@ const FullCalendar = ({ data = [] }) => {
 		});
 
 		calendar.render();
-		console.log('source event', calendar.getEventSources());
 
+		console.log('source event', calendar.getEventSources());
+		$('body').off('click', '**');
 		$('body').on('click', '.cancel-schedule', (e) => {
 			e.preventDefault();
 			const eventData = JSON.parse(e.target.getAttribute('rel'));
@@ -747,15 +789,64 @@ const FullCalendar = ({ data = [] }) => {
 		}
 	};
 
+	// useEffect(() => {
+	// 	initCalendar();
+
+	// 	if (data?.length > 0) {
+	// 		const newArr = data.map((event) => {
+	// 			return {
+	// 				...event,
+	// 				id: event.id,
+	// 				title: event.Title || '',
+	// 				start: dayjs(event.StartDate, 'DD/MM/YYYY HH:mm').toDate(),
+	// 				end: dayjs(event.EndDate, 'DD/MM/YYYY HH:mm').toDate(),
+	// 				eventType: event.eventType,
+	// 				bookStatus: event.BookingStatus,
+	// 				bookInfo: event.bookInfo,
+	// 				available: event.available,
+	// 				isEmptySlot: event.isEmptySlot,
+	// 				loading: false,
+	// 			};
+	// 		});
+
+	// 		calendar.addEventSource(newArr);
+	// 	}
+	// }, [teacher]);
+
 	useEffect(() => {
-		console.log({ data });
-		fetchEventByDate({
-			UID: 61230,
-			start: '01/03/2021',
-			end: '08/03/2021',
-			Token: '',
-		});
+		// console.log({ data });
+
+		// fetchEventByDate({
+		// 	UID: 61230,
+		// 	start: '01/03/2021',
+		// 	end: '08/03/2021',
+		// 	Token: '',
+		// });
+
+		console.log('Chạy trong useEffect');
 		initCalendar();
+		if (data?.length > 0) {
+			if (!changeData) {
+				const newArr = data.map((event) => {
+					return {
+						...event,
+						id: event.id,
+						title: event.Title || '',
+						start: dayjs(event.StartDate, 'DD/MM/YYYY HH:mm').toDate(),
+						end: dayjs(event.EndDate, 'DD/MM/YYYY HH:mm').toDate(),
+						eventType: event.eventType,
+						bookStatus: event.BookingStatus,
+						bookInfo: event.bookInfo,
+						available: event.available,
+						isEmptySlot: event.isEmptySlot,
+						loading: false,
+					};
+				});
+
+				calendar.addEventSource(newArr);
+			}
+		}
+
 		lottie &&
 			lottie.loadAnimation({
 				container: loadingRef.current, // the dom element that will contain the animation
@@ -788,7 +879,7 @@ const FullCalendar = ({ data = [] }) => {
 					}}
 					showModal={showActiveModal}
 					closeModal={() => setShowActiveModal(false)}
-					handleOpenSlot={_openSlot}
+					handleOpenSlot={() => _openSlot()}
 				/>
 
 				<CloseSlotModal data={activeModal} handleCloseSlot={_closeSlot} />

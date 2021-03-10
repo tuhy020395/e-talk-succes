@@ -284,7 +284,6 @@ const Feedback = ({ t }) => {
 									CreatedDate={item.CreatedDate}
 									Rate={item.Rate}
 									LinkDetail={item.LinkDetail}
-									CoursesName={item.CoursesName}
 								/>
 							))
 						) : (

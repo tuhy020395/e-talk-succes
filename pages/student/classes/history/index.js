@@ -118,14 +118,14 @@ const LessonItem = ({
 			<td className="tx-nowrap">
 				<span className="tx-success">{StatusName}</span>
 			</td>
-			<td>
+			{/* <td>
 				<Link href={`/student/evaluation/[eid]`} as={`/student/evaluation/1`}>
 					<a href={true} className="btn btn-info btn-icon">
 						<i className="fas fa-file-alt mg-r-10"></i>
 						Chi tiết
 					</a>
 				</Link>
-			</td>
+			</td> */}
 		</tr>
 	);
 };
@@ -191,7 +191,7 @@ const EvaluationLists = ({ t }) => {
 				<h1 className="main-title-page">{t('study-history')}</h1>
 				<div className="card">
 					<div className="card-body">
-						<form
+						{/* <form
 							action=""
 							method="get"
 							noValidate
@@ -214,9 +214,9 @@ const EvaluationLists = ({ t }) => {
 											isClearable={!!fromDate ? true : false}
 											startDate={fromDate}
 											endDate={toDate}
-										/>
-										{/* <input type="text" name="start-day " onChange={(value) =>  setFromDate(value)} className="form-control datetimepicker from-date" placeholder="From date" /> */}
-									</div>
+										/> */}
+						{/* <input type="text" name="start-day " onChange={(value) =>  setFromDate(value)} className="form-control datetimepicker from-date" placeholder="From date" /> */}
+						{/* </div>
 									<div className="col">
 										<DatePicker
 											dateFormat="dd/MM/yyyy"
@@ -239,7 +239,7 @@ const EvaluationLists = ({ t }) => {
 									</button>
 								</div>
 							</div>
-						</form>
+						</form> */}
 
 						<div className="table-responsive mg-t-20">
 							<table className="table">
@@ -250,7 +250,7 @@ const EvaluationLists = ({ t }) => {
 										<th>{t('lesson')}</th>
 										<th>{t('teacher')}</th>
 										<th>{t('status')}</th>
-										<th></th>
+										{/* <th></th> */}
 									</tr>
 								</thead>
 								<tbody>

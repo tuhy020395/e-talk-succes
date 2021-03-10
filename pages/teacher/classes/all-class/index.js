@@ -89,11 +89,11 @@ const AllClassRow = ({ data, showStudentModal }) => {
 			</td>
 			<td className="clr-lesson">
 				<div className="mg-b-5">
-					<span className=" mg-r-5 tx-medium">Course:</span>
 					<span className="">{data.CoursesName}</span>
 				</div>
+			</td>
+			<td>
 				<div className="">
-					<span className="mg-r-5 tx-medium">Lesson:</span>
 					<span className="">{data.DocumentName}</span>
 				</div>
 			</td>
@@ -119,17 +119,11 @@ const AllClassRow = ({ data, showStudentModal }) => {
 			</td>
 			<td className="clr-time">
 				<div className="mg-b-5">
-					<span className=" mg-r-5 tx-nowrap wd-80 d-inline-block">
-						<FontAwesomeIcon icon="clock" className="fa fa-clock tx-primary" />{' '}
-						<span className="tx-medium">VN time</span>:
-					</span>
 					<span className="">{data.VNTime}</span>
 				</div>
+			</td>
+			<td>
 				<div className="">
-					<span className=" mg-r-5 tx-nowrap wd-80 d-inline-block">
-						<FontAwesomeIcon icon="clock" className="fa fa-clock tx-primary" />{' '}
-						<span className="tx-medium">Your time</span>:
-					</span>
 					<span className="">{data.VNTime}</span>
 				</div>
 			</td>
@@ -290,7 +284,7 @@ const AllClasses = ({ t }) => {
 		<>
 			<h1 className="main-title-page">{t('all-class')}</h1>
 			<div className="d-flex align-items-center justify-content-between mg-b-15 flex-wrap">
-				<div className="wd-300 order-1 mg-t-15 mg-md-t-0">
+				<div className="wd-300 order-1 mg-t-15 mg-md-t-0 m-g-l-auto">
 					<Select
 						options={statusOptions}
 						defaultValue={filterStatusAllClass}
@@ -305,57 +299,6 @@ const AllClasses = ({ t }) => {
                         <option value="2">Finished</option>
                     </select> */}
 				</div>
-				<div
-					className="d-flex from-to-group wd-100p flex-md-nowrap flex-wrap wd-md-500"
-					id="filter-time"
-				>
-					<div className="form-row flex-grow-1 mg-sm-r-5">
-						<div className="col">
-							<DatePicker
-								dateFormat="dd/MM/yyyy"
-								className="form-control"
-								placeholderText={`From date`}
-								selected={fromDate}
-								onChange={(date) => setFromDate(date)}
-								selectsStart
-								isClearable={!!fromDate ? true : false}
-								startDate={fromDate}
-								endDate={toDate}
-								showMonthDropdown
-								showYearDropdown
-								dropdownMode="select"
-							/>
-							{/* <input type="text" name="start-day " onChange={(value) =>  setFromDate(value)} className="form-control datetimepicker from-date" placeholder="From date" /> */}
-						</div>
-						<div className="col">
-							<DatePicker
-								dateFormat="dd/MM/yyyy"
-								className="form-control"
-								placeholderText={`To date`}
-								selected={toDate}
-								onChange={(date) => setToDate(date)}
-								selectsEnd
-								isClearable={!!toDate ? true : false}
-								startDate={fromDate}
-								endDate={toDate}
-								minDate={fromDate}
-								showMonthDropdown
-								showYearDropdown
-								dropdownMode="select"
-							/>
-						</div>
-					</div>
-					<div className="flex-grow-0 tx-right flex-shrink-0 mg-t-30 mg-sm-t-0">
-						<button
-							type="button"
-							className="btn btn-primary "
-							onClick={_onFilterDate}
-						>
-							<FontAwesomeIcon icon="filter" className="fa fa-filter" />{' '}
-							{t('filter')}
-						</button>
-					</div>
-				</div>
 			</div>
 
 			<div className="card mg-b-30">
@@ -365,9 +308,11 @@ const AllClasses = ({ t }) => {
 							<thead>
 								<tr>
 									<th className="clr-id">ID</th>
+									<th className="clr-lesson">{t('course')}</th>
 									<th className="clr-lesson">{t('lesson')}</th>
 									<th className="clr-lesson">{t('student')}</th>
-									<th className="clr-time">{t('schedule')} </th>
+									<th className="clr-lesson">{t('vn-time')}</th>
+									<th className="clr-time">{t('your-time')} </th>
 									<th className="clr-status">{t('status')}</th>
 									{/* <th className="clr-finishType">Finish Type</th> */}
 									{/* <th className="clr-actions">{t('actions')}</th> */}

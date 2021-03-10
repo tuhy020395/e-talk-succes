@@ -60,7 +60,7 @@ const LessonHistoryCard = ({
 									href={`/ElearnStudent/lessonDetail?ID=${BookingID}`}
 									className="no-hl course-name tx-bold"
 								>
-									{CourseName}
+									{item.CourseName}
 								</a>
 							</h5>
 							<div className="course-information tx-14">

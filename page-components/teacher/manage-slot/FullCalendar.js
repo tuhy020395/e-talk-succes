@@ -86,21 +86,25 @@ const FullCalendar = ({ data = [] }) => {
 
 	// console.log('GET data API: ', getDataAPI);
 
-	const fetchEventByDate = async (date) => {
+	const fetchEventByDate = async (obj) => {
 		setIsLoading(true);
 
 		try {
-			const res = await getListEventsOfWeek(date); // @string date dd/mm/yyyyBookingStatusBookingStatus
-			console.log(res);
+			const res = await getListEventsOfWeek({
+				UID: obj.UID,
+				start: obj.start,
+				end: obj.end,
+				Token: obj.Token,
+			}); // @string date dd/mm/yyyyBookingStatusBookingStatus
 			if (res.Code === 200 && res.Data.length > 0) {
 				setDataAPI(res.Data);
 
 				// calendar.addEventSource(showData());
 				// Hồi nãy nó có filter nữa nên nó chỉ lấy mấy cái empty, nên cái có data k showw
-				const newEvents = res.Data.map((event) => {
+				const newEvents = res.Data.map((event, i) => {
 					return {
 						...event,
-						id: event.BookingID,
+						id: i,
 						title: event.Title || '',
 						OpenID: event.OpenID,
 						start: dayjs(event.StartDate, 'DD/MM/YYYY HH:mm').toDate(),
@@ -118,8 +122,8 @@ const FullCalendar = ({ data = [] }) => {
 				const sources = calendar.getEventSources();
 
 				if (sources.length > 0) {
-					// sources[0].remove();
-					console.log('RUN THIS');
+					sources[0].remove();
+					console.log('SOURCE nè: ', sources);
 					calendar.addEventSource(newEvents);
 				}
 			}
@@ -131,32 +135,63 @@ const FullCalendar = ({ data = [] }) => {
 		// console.log('After save: ', calendar.getEventSources());
 	};
 
+	const callFetchEvent = (date) => {
+		let UID = null;
+		let Token = null;
+
+		// GET UID and Token
+		if (localStorage.getItem('UID')) {
+			UID = localStorage.getItem('UID');
+			Token = localStorage.getItem('token');
+		}
+
+		// GET DATE
+		let cur = new Date();
+
+		let getDate = date.getDate();
+		let testDate = new Date(cur.setDate(getDate + 6)).toUTCString();
+
+		let start = dayjs(date).format('DD/MM/YYYY');
+		let end = dayjs(testDate).format('DD/MM/YYYY');
+
+		// ----
+
+		fetchEventByDate({
+			UID: UID,
+			start: start,
+			end: end,
+			Token: Token,
+		});
+	};
+
 	const triggerNextCalendar = () => {
-		//setIsLoading(true);
-		//setTimeout(() => setIsLoading(false), 3000);
+		calendar.refetchEvents();
+
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log('Current Date: ', currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
 	const triggerPrevCalendar = () => {
+		calendar.refetchEvents();
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log('Current Date: ', currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
 	const triggerTodayCalendar = () => {
+		calendar.refetchEvents();
 		if (!calendar) return;
 		try {
 			const currentDate = calendar.getDate();
-			console.log(currentDate);
-			fetchEventByDate(currentDate);
+
+			callFetchEvent(currentDate);
 		} catch (error) {}
 	};
 
@@ -345,35 +380,6 @@ const FullCalendar = ({ data = [] }) => {
 		// }
 		// setIsLoading(false);
 	};
-
-	// const _cancelSlot = async (reason = '') => {
-	// 	setCancelLoading(true);
-	// 	try {
-	// 		const eventId = modalData.eventId;
-	// 		const eventInstance = calendar.getEventById(eventId);
-	// 		const res = await teacherCancelFreeSchedule({
-	// 			BookingID: eventInstance.extendedProps.BookingID,
-	// 			ReasonCancleOfTeacher: reason,
-	// 		});
-	// 		console.log(res);
-	// 		if (res.Code === 200) {
-	// 			eventInstance && eventInstance.remove();
-	// 			toast.success('You have canceled a lesson successfully', {
-	// 				position: toast.POSITION.TOP_CENTER,
-	// 				autoClose: 2000,
-	// 			});
-	// 			setShowCancelModal(false);
-	// 		} else {
-	// 			toast.error(res?.Message ?? 'Cancel slot failed', {
-	// 				position: toast.POSITION.TOP_CENTER,
-	// 				autoClose: 2000,
-	// 			});
-	// 		}
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// 	setCancelLoading(false);
-	// };
 
 	const onSubmit = (e) => {
 		e.preventDefault();
@@ -631,7 +637,7 @@ const FullCalendar = ({ data = [] }) => {
 			slotMinTime: '00:00',
 			slotMaxTime: '24:00',
 
-			events: data.map((y) => ({
+			events: data?.map((y) => ({
 				...y,
 				id: randomId(),
 				loading: true,
@@ -788,6 +794,7 @@ const FullCalendar = ({ data = [] }) => {
 				//   console.log("nowIndicatorDidMount", args);
 			},
 		});
+
 		calendar.render();
 		// console.log('source event', calendar.getEventSources());
 
@@ -852,27 +859,23 @@ const FullCalendar = ({ data = [] }) => {
 	// ------------ END INIT CALENDAR ---------------
 
 	const _closeSlot = async (event) => {
-		console.log(event);
-
 		try {
 			event.preventDefault();
 			const closeBtn = event.target;
 			const eventId = JSON.parse(closeBtn.getAttribute('data-schedule'));
 			const eventInstance = calendar.getEventById(eventId.id);
-			console.log('ID can xoa: ', eventId);
-			console.log('eventInstance', eventInstance);
-			console.log(eventId.OpenID);
+
 			const res = await setEventClose({
 				OpenID: eventId.OpenID,
 			});
 
-			// let openDate = dayjs(eventId.start, 'DD/MM/YYYY HH:mm').toDate();
+			let openDate = dayjs(eventId.start, 'DD/MM/YYYY HH:mm').toDate();
 
-			// console.log('event Id:  ', eventId);
-			// console.log(
-			// 	'openDate:  ',
-			// 	dayjs(eventId.TeacherStart, 'DD/MM/YYYY HH:mm').toDate(),
-			// );
+			console.log('event Id:  ', eventId);
+			console.log(
+				'openDate:  ',
+				dayjs(eventId.TeacherStart, 'DD/MM/YYYY HH:mm').toDate(),
+			);
 
 			if (res.Code === 200) {
 				eventInstance.remove();
@@ -889,38 +892,28 @@ const FullCalendar = ({ data = [] }) => {
 	};
 
 	useEffect(() => {
-		// fetchEventByDate({
-		// 	UID: 61230,
-		// 	start: dateCalendar.start,
-		// 	end: dateCalendar.end,
-		// 	Token: '',
-		// });
-
-		getSpaceDate();
+		// getSpaceDate();
 		initCalendar();
-		console.log('Calendar in use: ', calendar);
+		console.log(data);
+		if (data?.length > 0) {
+			const newArr = [...data].map((event, i) => {
+				return {
+					...event,
+					id: i,
+					title: event.Title || '',
+					start: dayjs(event.StartDate, 'DD/MM/YYYY HH:mm').toDate(),
+					end: dayjs(event.EndDate, 'DD/MM/YYYY HH:mm').toDate(),
+					eventType: event.eventType,
+					bookStatus: event.BookingStatus,
+					bookInfo: event.bookInfo,
+					available: event.available,
+					isEmptySlot: event.isEmptySlot,
+					loading: false,
+				};
+			});
 
-		// fetchEventByDate({
-		// 	UID: 61230,
-		// 	start: dateCalendar.start,
-		// 	end: dateCalendar.end,
-		// 	Token: '',
-		// });
-
-		// if (calendar !== null) {
-		// 	// let startDay = calendar.currentData.dateProfile.currentRange.start;
-		// 	// let endDay = calendar.currentData.dateProfile.currentRange.end;
-		// 	// startDay = dayjs(startDay).format('DD/MM/YYYY HH:mm');
-		// 	// endDay = dayjs(endDay).format('DD/MM/YYYY HH:mm');
-		// 	// startDay = startDay.split(' ')[0];
-		// 	// endDay = endDay.split(' ')[0];
-		// 	// console.log('Start Day: ', startDay);
-		// 	// console.log('End Day: ', endDay);
-		// }
-
-		// if (dateCalendar.start !== null && dateCalendar.end !== null) {
-
-		// }
+			calendar.addEventSource(newArr);
+		}
 
 		lottie &&
 			lottie.loadAnimation({

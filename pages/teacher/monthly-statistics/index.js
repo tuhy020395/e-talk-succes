@@ -220,12 +220,6 @@ const MonthlyStatistics = ({ t }) => {
 											<p className="tx-gray-500 mg-b-0">{t('note-3')}</p>
 										</td>
 									</tr>
-									<tr>
-										<td>
-											<h5>{t('teacher-cancellation-slots')}</h5>
-											<p className="tx-gray-500 mg-b-0">{t('note-4')}</p>
-										</td>
-									</tr>
 								</tbody>
 								<tbody>
 									<tr>

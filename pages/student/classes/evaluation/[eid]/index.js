@@ -41,7 +41,15 @@ const LessonDetail = ({ t }) => {
 	const [state, setState] = useState({});
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
+
 	const getAPI = async (params) => {
+		// console.log(UID);
+		// let UID = null;
+		// let Token = null;
+		// if (localStorage.getItem('UID')) {
+		// 	UID = localStorage.getItem('UID');
+		// 	Token = localStorage.getItem('token');
+		// }
 		setLoading(true);
 		const res = await GetEvaluationDetail(params);
 		if (res.Code === 200) {
@@ -62,7 +70,7 @@ const LessonDetail = ({ t }) => {
 
 	useEffect(() => {
 		getAPI({
-			ElearnBookingID: router.query.eid,
+			UID: 61215,
 		});
 	}, []);
 
@@ -86,15 +94,7 @@ const LessonDetail = ({ t }) => {
 												<span className="tx-black tx-normal">
 													{t('package')}:{' '}
 												</span>
-												<span>{state.CoursesName}</span>
-											</p>
-										</div>
-										<div className="st-time">
-											<p className="st-teacher-text">
-												<i className="fa fa-book st-icon wd-20 mg-r-5"></i>
-												<span>
-													{t('course')}: <span>{state.CourseName}</span>
-												</span>
+												<span>GÓI HỌC Thử</span>
 											</p>
 										</div>
 
@@ -102,21 +102,14 @@ const LessonDetail = ({ t }) => {
 											<p className="st-teacher-text">
 												<i className="fas fa-chalkboard-teacher st-icon wd-20 mg-r-5"></i>
 												<span>{t('teacher')}:</span>{' '}
-												<span className="st-tengv">{state.TeacherName}</span>
+												<span className="st-tengv">Cris Teacher</span>
 											</p>
 										</div>
 										<div className="st-time">
 											<p className="st-teacher-text">
 												<i className="fa fa-book-open st-icon wd-20 mg-r-5"></i>
 												<span>
-													{t('material')}:{' '}
-													<a
-														href={state.MaterialLink}
-														target="_blank"
-														rel="noreferrer"
-													>
-														{state.Material}
-													</a>{' '}
+													{t('material')}: <span></span>
 												</span>
 											</p>
 										</div>
@@ -189,7 +182,7 @@ const LessonDetail = ({ t }) => {
 										</div>
 									)} */}
 									<div className="st-title-danhgia mg-b-15">
-										<h5 className="pd-b-10">{state.Note}</h5>
+										<h5 className="pd-b-10"></h5>
 									</div>
 								</div>
 							</div>
@@ -198,7 +191,7 @@ const LessonDetail = ({ t }) => {
 							<h5 className="main-title">{t('remark')}</h5>
 							{/* <!--/Đánh giá ngữ pháp-->*/}
 							<div className="st-title-danhgia mg-b-15">
-								<h5 className="pd-b-10 bd-b">{state.ContentRate}</h5>
+								{/* <h5 className="pd-b-10 bd-b">{state.ContentRate}</h5> */}
 							</div>
 							{/* <div className="st-danhgianguphap mg-b-30">
 								<div className="st-title-danhgia mg-b-15">
@@ -355,10 +348,9 @@ const LessonDetail = ({ t }) => {
 							</div> */}
 						</div>
 						<RatingLessonModal
-							BookingID={state.ElearnBookingID}
-							TeacherUID={state.TeacherUID}
-							TeacherName={state.TeacherName}
-							callback={onCallbackRating}
+						// TeacherUID={state.TeacherUID}
+						// TeacherName={state.TeacherName}
+						// callback={onCallbackRating}
 						/>
 					</div>
 				</>

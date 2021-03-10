@@ -209,10 +209,10 @@ export const getListEventsOfWeek = async (params) => {
 	try {
 		let res = await instance.get(path + '/teacherLoadTeachingSchedule', {
 			params: {
-				UID: 61230,
+				UID: params.UID,
 				start: params.start,
 				end: params.end,
-				Token: '',
+				Token: params.Token,
 			},
 			// params: {
 			// 	UID: 61230,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 const ActiveSlotModal = ({
 	data,
@@ -7,8 +7,13 @@ const ActiveSlotModal = ({
 	closeModal,
 	openModal,
 }) => {
-	console.log(data);
 	const { date = '', start = '', end = '' } = data;
+	const [onSending, sOnSending] = React.useState(false);
+
+	useEffect(() => {
+		onSending && handleOpenSlot();
+	}, [onSending]);
+
 	return (
 		<>
 			<Modal
@@ -16,6 +21,7 @@ const ActiveSlotModal = ({
 				// backdrop="static"   //Prevent close when click overlay
 				keyboard={false}
 				centered
+				animation={false}
 				onHide={closeModal}
 			>
 				<Modal.Header closeButton>
@@ -45,6 +51,7 @@ const ActiveSlotModal = ({
 				<Modal.Footer>
 					<button
 						type="button"
+						disabled={onSending}
 						className="btn btn-light btn-sm"
 						onClick={closeModal}
 					>
@@ -52,10 +59,17 @@ const ActiveSlotModal = ({
 					</button>
 					<button
 						type="button"
+						disabled={onSending}
 						className="btn btn-primary btn-sm tx-primary"
-						onClick={handleOpenSlot}
+						onClick={() => sOnSending(true)}
 					>
-						Open slot
+						{onSending ? (
+							<span>
+								<i class="fas fa-spinner fa-spin"></i> Open slot
+							</span>
+						) : (
+							<span>Open slot</span>
+						)}
 					</button>
 				</Modal.Footer>
 			</Modal>

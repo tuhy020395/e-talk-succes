@@ -128,7 +128,7 @@ const Header = ({ t, isStudent }) => {
 						}}
 					/>
 
-					<div className="dropdown dropdown-notification">
+					{/* <div className="dropdown dropdown-notification">
 						<a
 							href
 							className="dropdown-link new-indicator"
@@ -214,7 +214,7 @@ const Header = ({ t, isStudent }) => {
 								<a href>Xem tất cả thông báo</a>
 							</div>
 						</div>
-					</div>
+					</div> */}
 					<div className="dropdown dropdown-profile">
 						<a
 							href
@@ -245,8 +245,10 @@ const Header = ({ t, isStudent }) => {
 									alt=""
 								/>
 							</div>
-							<h6 className="tx-semibold mg-b-5">Mona Media</h6>
-							<p className="mg-b-25 tx-12 tx-color-03">Administrator</p>
+							<h6 className="tx-semibold mg-b-5">{dataUser?.StudentName}</h6>
+							<p className="mg-b-25 tx-12 tx-color-03">
+								{isStudent ? 'Học viên' : t('role')}
+							</p>
 							<Link href={isStudent ? '/student/profile' : '/teacher/profile'}>
 								<a href={true} className="dropdown-item">
 									<i data-feather="user" /> View Profile
